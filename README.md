@@ -13,7 +13,7 @@ La Universidad Nacional de Colombia desea implementar un sistema para la gestió
 Para el proyecto se usarán arboles AVL que estará ordenado por el puntaje socioeconómico, esto justifica recordando que la asignación de cupos será determinada por el estudiante que tenga el menor puntaje socioeconómico, para este fin se precisa la rápida identificación de dicho estudiante, gracias a este tipo de estructura de datos dicho dato siempre estará al extremo izquierdo del árbol y los demás irán ordenados por su puntaje, consecutivamente. Sin embargo, surge un problema a la hora de realizar una búsqueda por ID, en vista que el árbol está ordenado por puntaje y no por ID, la complejidad de busqueda por ID seria (O(n)), la cual a grandes rasgos nos conlleva a tiempos de ejecución lentos, no obstante, para solucionar este problema podríamos implementar una estructura adicional, en este caso los arreglos nos permiten realizar búsquedas binarias, complejidad logarítmica O(log n); esto resulta en una solución ideal para la búsqueda por ID único.
 
 
-Lenguajes de programación usados: ** Java (versión 25)**
+Lenguajes de programación usados: **Java (versión 25)**
 
 Integrantes del grupo:
 - Sergio Bohórquez Alfonso
