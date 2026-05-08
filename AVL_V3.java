@@ -240,10 +240,62 @@ class AVL<T extends Comparable<T>>{
             inOrderRec(node.right);
         }
     }
-    
-}
+public void delete(T data) {
+    root = deleteRec(root, data);
+    }
 
-//Falta poder eliminar elementos
+    private Node deleteRec(Node node, T data) {
+        if (node == null) return null;
+
+        int cmp = data.compareTo((T) node.data);
+
+        if (cmp < 0) {
+            node.left = deleteRec(node.left, data);
+        } else if (cmp > 0) {
+            node.right = deleteRec(node.right, data);
+        } else {
+            // Nodo encontrado: casos con 0 o 1 hijo
+            if (node.left == null || node.right == null) {
+                node = (node.left != null) ? node.left : node.right;
+            } else {
+                // Caso con 2 hijos: reemplazar con el sucesor in-order (mínimo del subárbol derecho)
+                Node sucesor = getMinNode(node.right);
+                node.data = sucesor.data;
+                node.right = deleteRec(node.right, (T) sucesor.data);
+            }
+        }
+
+        if (node == null) return null;
+
+        // Actualizar altura y rebalancear
+        node.height = 1 + Math.max(height(node.left), height(node.right));
+        int balance = getBalance(node);
+
+        // Rotaciones (mismos 4 casos que en insert)
+        if (balance > 1 && getBalance(node.left) >= 0)
+            return rightRotate(node);
+
+        if (balance > 1 && getBalance(node.left) < 0) {
+            node.left = leftRotate(node.left);
+            return rightRotate(node);
+        }
+
+        if (balance < -1 && getBalance(node.right) <= 0)
+            return leftRotate(node);
+
+        if (balance < -1 && getBalance(node.right) > 0) {
+            node.right = rightRotate(node.right);
+            return leftRotate(node);
+        }
+
+        return node;
+    }
+
+    private Node getMinNode(Node node) {
+        while (node.left != null) node = node.left;
+        return node;
+    }    
+}
 
 class SISTEMA <T extends Comparable<T>>{
     //ATRIBUTOS
