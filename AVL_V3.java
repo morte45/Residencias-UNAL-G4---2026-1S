@@ -371,6 +371,10 @@ class SISTEMA <T extends Comparable<T>>{
     public void Asignar_Cupos(){
       Node root = Estudiantes_ordenados_por_Puntaje_SE.getRoot();
       Estudiantes_con_cupo.EraseALL();
+      c = cupos_disponibles;
+      //^^^ ESTA LINEA SE AGREGO PARA QUE DESPUES DE EJECUTAR LA ELIMINACIÓN SE INICIE C CON EL VALOR CORRECTO Y SE RESETEE
+      // DE ESTE MODO DESPUES DE ELIMINAR IMPRIMIRÁ BIEN LOS ESTUDIANTES CON RESIDENCIA, PUESTO QUE CUANDO SE LLAMA A ELIMINAR_ESTUDIANTE_POR_ID
+      // C NO SE INCIALIZA SINO QUE SE EJECUTA HASTA LLEGAR A 0, A PARTIR DE AHI NO IMPRIME NINGUN ESTUDIANTE CON RESIDENCIA
       Asignar_CuposREC(root);
     }
     private void Asignar_CuposREC(Node node){
