@@ -131,5 +131,26 @@ public class Bocetoproyecto{
         }
         return node;
     }
+    public boolean search(T data) {
+        return searchRec(root, data);
+    }
+    private boolean searchRec(Node root, T data) {
+        if (root==null) return false;
+        int cmp=data.compareTo((T)root.data);
+        if (cmp==0) return true;
+        if (cmp<0) return searchRec(root.left,data);
+        return searchRec(root.right,data);
+    }
+    public void inOrder() {
+        inOrderRec(root);
+        System.out.println();
+    }
+    private void inOrderRec(Node node) {
+        if (node != null) {
+            inOrderRec(node.left);
+            System.out.print(node.data+" ");
+            inOrderRec(node.right);
+        }
+    }
   }
 }
