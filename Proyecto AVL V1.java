@@ -1,4 +1,4 @@
-public class Bocetoproyecto{
+public class ProyectoAVLV1{
   public static void main(String[] args){
   }
   ///////////////////////////////////////////////////
