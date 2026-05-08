@@ -1,5 +1,3 @@
-
-
 public class Bocetoproyecto_BST{
     public static void main(String[] args){
 
@@ -41,6 +39,28 @@ class Estudiante implements Comparable<Estudiante>{
         }
     }
     
+    public int getId() {
+        return id;
+    }
+
+    public String getNombre(){
+        return nombre;
+    }
+    
+    public byte getPuntajeSE() {
+        return puntajeSE;
+    }
+
+    public void setPuntajeSE(byte puntajeSE) {
+        this.puntajeSE = puntajeSE;
+    }
+    
+    
+    @Override
+    public String toString() {
+        return "[ID:" + id + " Nombre:" + nombre + " Puntaje socioeconomico:" + puntajeSE + "]";
+    }
+    
 }
     class Node<T> {
         T data;
@@ -53,6 +73,7 @@ class Estudiante implements Comparable<Estudiante>{
             this.height=1;
         }
     }
+    
 
 class BST<T extends Comparable<T>>{
 
@@ -200,6 +221,22 @@ class SISTEMA <T extends Comparable<T>>{
             }
             Asignar_CuposREC(node.right);
         }
+    }
+    public void Modificar_puntaje_estudiante(Estudiante estudiante,byte puntaje_nuevo){
+        Estudiantes_ordenados_por_Puntaje_SE.delete((T) estudiante);
+        estudiante.setPuntajeSE(puntaje_nuevo);
+        Agregar_Estudiante(estudiante);
+    }
+    
+    @SuppressWarnings("unchecked")
+	public void Eliminar_Estudiante(Estudiante estudiante){
+        Estudiantes_ordenados_por_Puntaje_SE.delete((T) estudiante);
+        //borrar_ID(estudiante.getId()); TODO
+        Asignar_Cupos();
+    }
+    //Listar Estudiantes por puntaje socioeconomico en orden creciente
+    public void Listar_por__puntaje_SE(){
+        Estudiantes_ordenados_por_Puntaje_SE.inOrder();
     }
     
 }    
