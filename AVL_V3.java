@@ -65,7 +65,44 @@ public class Bocetoproyecto{
         //IMPRIMIR ESTUDIANTE POR ID QUE NO EXISTE
         System.out.println("IMPRIMIR  ESTUDIANTE POR ID QUE NO EXISTE: ID 250");
         System.out.println(s.obtener_datos_por_ID(250) );
-    }
+
+        //PRUEBAS ELIMINAR ESTUDIANTE
+        System.out.println("\n--- PRUEBAS DE ELIMINACION ---\n");
+
+        System.out.println("\n--- ESTADO INICIAL ---");
+        s.listar_estudiantes_con_residencia();
+        System.out.println(" ");
+        s.Listar_estudiantes_sin_residencia();
+        System.out.println(" ");
+
+        //ELIMINAR ESTUDIANTE CON CUPO (Ej. Maria)
+        System.out.println("\n--- ELIMINAR ESTUDIANTE CON CUPO ---");
+        s.Eliminar_Estudiante_por_ID(40);
+        System.out.println(" ");
+        s.listar_estudiantes_con_residencia();
+        System.out.println(" ");
+        s.Listar_estudiantes_sin_residencia();
+        System.out.println(" ");
+
+        //ELIMINAR ESTUDIANTE SIN CUPO (Ej. Juan)
+        System.out.println("\n--- ELIMINAR ESTUDIANTE CON CUPO ---");
+        s.Eliminar_Estudiante_por_ID(10);
+        System.out.println(" ");
+        s.listar_estudiantes_con_residencia();
+        System.out.println(" ");
+        s.Listar_estudiantes_sin_residencia();
+        System.out.println(" ");
+
+        //ELIMINAR ESTUDIANTE CON ID INEXISTENTE
+        System.out.println("\n--- ELIMINAR ID INEXISTENTE ---");
+        s.Eliminar_Estudiante_por_ID(3108);
+        System.out.println(" ");
+        
+        //ELIMINAR Y BUSCAR ESTUDIANTE ELIMINADO POR ID (Ej. Carlos)
+        System.out.println("\n--- ELIMINAR Y BUSCAR ---");
+        s.Eliminar_Estudiante_por_ID(25);
+        System.out.println("RESULTADO: \n " + s.obtener_datos_por_ID(25));
+    }   
 }
 
 class Estudiante implements Comparable<Estudiante>{
@@ -105,7 +142,11 @@ class Estudiante implements Comparable<Estudiante>{
     public int getId() {
         return id;
     }
-
+    
+        public String getNombre(){
+        return nombre;
+    }
+    
     public byte getPuntajeSE() {
         return puntajeSE;
     }
@@ -345,15 +386,13 @@ class SISTEMA <T extends Comparable<T>>{
     
     //METODOS PARA MODIFICAR ESTUDIANTES
     public void Modificar_puntaje_estudiante(Estudiante estudiante,byte puntaje_nuevo){
-        // las // es hasta que se implemente el metodo delete para no generar error
-        //Estudiantes_ordenados_por_Puntaje_SE.delete();
+        Estudiantes_ordenados_por_Puntaje_SE.delete();
         estudiante.setPuntajeSE(puntaje_nuevo);
         Agregar_Estudiante(estudiante);
     }
     
     public void Eliminar_Estudiante(Estudiante estudiante){
-        // las // hasta que se implemente delete
-        //Estudiantes_ordenados_por_Puntaje_SE.delete();
+        Estudiantes_ordenados_por_Puntaje_SE.delete();
         borrar_ID(estudiante.getId());
         Asignar_Cupos();
     }
