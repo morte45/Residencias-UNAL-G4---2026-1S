@@ -84,13 +84,66 @@ class BST<T extends Comparable<T>>{
         
         return node;
     }
-
     
-       
+    public boolean search(T data) {
+        return searchRec(root, data);
+    }
+
+    private boolean searchRec(Node root, T data) {
+        if (root==null) return false;
+        int cmp=data.compareTo((T)root.data);
+        if (cmp==0) return true;
+        if (cmp<0) return searchRec(root.left,data);
+        return searchRec(root.right,data);
+    }
+
+    public void inOrder() {
+        inOrderRec(root);
+        System.out.println();
+    }
+
+    private void inOrderRec(Node node) {
+        if (node != null) {
+            inOrderRec(node.left);
+            System.out.print(node.data+" ");
+            inOrderRec(node.right);
+        }
+    }
+    public void delete(T data) {
+        root = deleteRec(root, data);
+        }
+
+    private Node deleteRec(Node node, T data) {
+    	if (node == null) return null;
+
+        int cmp = data.compareTo((T) node.data);
+
+        if (cmp < 0) {
+        	node.left = deleteRec(node.left, data);
+        } else if (cmp > 0) {
+            node.right = deleteRec(node.right, data);
+        } else {
+        	// Nodo encontrado: casos con 0 o 1 hijo
+            if (node.left == null || node.right == null) {
+            	node = (node.left != null) ? node.left : node.right;
+            } else {
+            	// Caso con 2 hijos: reemplazar con el sucesor in-order (mínimo del subárbol derecho)
+                Node sucesor = getMinNode(node.right);
+                node.data = sucesor.data;
+                node.right = deleteRec(node.right, (T) sucesor.data);
+            }
+        }
+
+        if (node == null) return null;
+        	return node;
+    }
+
+    private Node getMinNode(Node node) {
+    	while (node.left != null) node = node.left;
+        return node;
+    }    
 }
 
-
-//Falta poder eliminar elementos
 
 class SISTEMA <T extends Comparable<T>>{
     //ATRIBUTOS
@@ -119,14 +172,34 @@ class SISTEMA <T extends Comparable<T>>{
     	
     	Estudiantes_ordenados_por_Puntaje_SE.insert((T) estudiante);
     	c=cupos_disponibles;
-    	//Asignar_Cupos(); TODO
+    	Asignar_Cupos();
       	//asignar_ID(estudiante.getId(),(T)estudiante); TODO
     }
     public void Asignar_numero_de_cupos(int n){
         cupos_disponibles=n;
         c=cupos_disponibles;
-        //Asignar_Cupos(); TODO
+        Asignar_Cupos();
+    }
+    public void Asignar_Cupos(){
+    	Node root = Estudiantes_ordenados_por_Puntaje_SE.getRoot();
+    	//Estudiantes_con_cupo.EraseALL(); TODO
+    	c = cupos_disponibles; 
+    	//^^^ ESTA LINEA SE AGREGO PARA QUE DESPUES DE EJECUTAR LA ELIMINACIÓN SE INICIE C CON EL VALOR CORRECTO Y SE RESETEE
+    	// DE ESTE MODO DESPUES DE ELIMINAR IMPRIMIRÁ BIEN LOS ESTUDIANTES CON RESIDENCIA, PUESTO QUE CUANDO SE LLAMA A ELIMINAR_ESTUDIANTE_POR_ID
+    	// C NO SE INCIALIZA SINO QUE SE EJECUTA HASTA LLEGAR A 0, A PARTIR DE AHI NO IMPRIME NINGUN ESTUDIANTE CON RESIDENCIA 
+    	Asignar_CuposREC(root);
     }
     
+    @SuppressWarnings("unchecked")
+	private void Asignar_CuposREC(Node node){
+        if(node!=null){
+            Asignar_CuposREC(node.left);
+            if(c>0){
+              //Estudiantes_con_cupo.pushBack((T)node.data); TODO
+              c--;
+            }
+            Asignar_CuposREC(node.right);
+        }
+    }
     
 }    
