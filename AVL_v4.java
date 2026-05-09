@@ -117,26 +117,12 @@ class Estudiante implements Comparable<Estudiante>{
     }
 
     public int compareTo(Estudiante otro){
-        if(this.puntajeSE>otro.puntajeSE){
-            return 1;
+        if (this.puntajeSE != otro.puntajeSE){
+            return Byte.compare(this.puntajeSE, otro.puntajeSE);
         }
-        else if(this.puntajeSE<otro.puntajeSE){
-            return -1;
-        }
-        else{
-            int x=Math.min(this.nombre.length(),otro.nombre.length());
-            for(int i=0;i<x;i++){
-                char c1=this.nombre.charAt(i);
-                char c2=otro.nombre.charAt(i);
-                if(c1>c2){
-                    return 1;
-                }
-                else if(c2>c1){
-                    return -1;
-                }
-            }
-            return 0;
-        }
+        int cmp = this.nombre.compareTo(otro.nombre);
+        if (cmp != 0) return cmp;
+        return Integer.compare(this.id, otro.id);
     }
 
     public int getId() {
