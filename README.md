@@ -20,4 +20,6 @@ Integrantes del grupo:
 - Diego Andrés Rodríguez Cuarán
 - Heyder Andres Carlosama Hernandez
 - Miguel Angel Amortegui Enciso
-- Edgar Mauricio Gonzalez Yaya
+
+
+Para instalar siga las instrucciones del video o copie el repositorio y abra el archivo AVL_v4.java nombre una carpeta con ese nombre y ejecute el codigo
