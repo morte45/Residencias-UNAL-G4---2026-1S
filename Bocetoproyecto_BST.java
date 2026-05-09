@@ -239,4 +239,110 @@ class SISTEMA <T extends Comparable<T>>{
         Estudiantes_ordenados_por_Puntaje_SE.inOrder();
     }
     
-}    
+} 
+
+class ArrayListP<T extends Comparable<T>> {
+    private Object[] main = new Object[1];
+    private int size = 0;
+    
+    private void resize() {
+        Object[] a = main;
+        Object[] b = new Object[size * 2];
+        for (int i = 0; i < main.length; i++) {
+            b[i] = a[i];
+        }
+        main = b;
+    }
+    
+    public void pushFront(T valor){
+        if (size == main.length) resize();
+        for (int i = size-1; i >= 0; i--) {
+            main[i+1] = main[i];
+        }
+        main[0] = valor;
+        size++;
+    }
+  
+    public void pushBack(T valor){
+        if(size == main.length) resize();
+        main[size] = valor;
+        size++;
+    }
+  
+    public void popFront(){
+        for (int i = 0; i < size-1; i++) {
+            main[i] = main[i+1];
+        }
+        main[size-1] = null;
+        size--;
+    }
+  
+    public void popBack(){
+        main[size-1] = null;
+        size--;
+    }
+  
+    public int find(T valor){
+        int index = -1;
+        for(int i = 0; i < size; i++) {
+            @SuppressWarnings("unchecked")
+            T cmp = (T)main[i];
+            if(valor.compareTo(cmp) == 0) {
+                index = i; 
+                break;
+            }
+        }
+        return index;
+    }
+  
+    public void remove(T valor){
+        int index = 0; 
+        for (int i = 0; i < size; i++) {
+            @SuppressWarnings("unchecked")
+            T cmp = (T)main[i];
+            if(valor.compareTo(cmp) == 0) {
+                index = i;
+                for (int j = index; j < size-1; j++) {
+                    main[j] = main[j+1];
+                }
+                main[size-1] = null;
+                size--;
+                break;
+            }
+        }
+    }
+  
+    public void add(int index, T valor){
+        if(size == main.length) resize();
+        for (int i = size-1; i >= index; i--) {
+            main[i+1] = main[i];
+        }
+        main[index] = valor;
+        size++;
+    }
+  
+    public boolean isEmpty(){
+        return size == 0;
+    }
+    
+    public void Imprimir_elementos(){
+        if (!SISTEMA.silenciar) System.out.println("Estudiantes que obtuvieron cupo en las residencias estudiantiles");
+        for (int i = 0; i < size; i++) {
+            if (!SISTEMA.silenciar) System.out.println(main[i]);
+        }
+    }
+      
+    @SuppressWarnings("unchecked")
+    public T ultimo_elemento_ingresado(){
+        T last = null;
+        if(size >= 1) {
+            last = (T) main[size-1];
+        }
+        return last;
+    }
+    
+    public void EraseALL(){
+        main = new Object[1];
+        size = 0;
+    }
+}
