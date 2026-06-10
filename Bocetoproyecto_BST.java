@@ -4,238 +4,6 @@ public class Bocetoproyecto_BST {
     }
 }
 
-class AnalizadorRendimiento {
-
-    private static StringBuilder salida = new StringBuilder();
-
-    private static void log(String texto) {
-        salida.append(texto).append("\n");
-    }
-
-    public static void medirLectura(int size, String method,
-                                     java.util.function.Function<Integer, SISTEMA> systemSupplier,
-                                     java.util.function.Consumer<SISTEMA> operation) {
-
-        int reps = 500;
-        SISTEMA sistema = systemSupplier.apply(size);
-
-        for (int i = 0; i < 20; i++) {
-            operation.accept(sistema);
-        }
-
-        long start = System.nanoTime();
-
-        for (int i = 0; i < reps; i++) {
-            operation.accept(sistema);
-        }
-
-        long finish = System.nanoTime();
-
-        double nanos = (double)(finish - start) / reps;
-
-        if (nanos >= 1_000_000) {
-
-            salida.append(String.format(
-                    "  %-35s N=%-8d >> %10.3f ms (promedio de %d reps)%n",
-                    method, size, nanos / 1_000_000, reps));
-
-        } else if (nanos >= 1_000) {
-
-            salida.append(String.format(
-                    "  %-35s N=%-8d >> %10.2f us (promedio de %d reps)%n",
-                    method, size, nanos / 1_000, reps));
-
-        } else {
-
-            salida.append(String.format(
-                    "  %-35s N=%-8d >> %10.2f ns (promedio de %d reps)%n",
-                    method, size, nanos, reps));
-        }
-    }
-
-    public static void medirEscritura(int size, String method,
-                                       java.util.function.Function<Integer, SISTEMA> systemSupplier,
-                                       java.util.function.Consumer<SISTEMA> operation) {
-
-        int reps = 30;
-        long tiempoTotal = 0;
-        int exitos = 0;
-
-        for (int rep = 0; rep < reps; rep++) {
-
-            SISTEMA sistema = systemSupplier.apply(size);
-
-            if (rep % 10 == 0 && rep > 0) {
-                System.gc();
-
-                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException e) {}
-            }
-
-            long start = System.nanoTime();
-
-            operation.accept(sistema);
-
-            long finish = System.nanoTime();
-
-            tiempoTotal += (finish - start);
-            exitos++;
-        }
-
-        double nanos = (double) tiempoTotal / exitos;
-
-        if (nanos >= 1_000_000) {
-
-            salida.append(String.format(
-                    "  %-35s N=%-8d >> %10.3f ms (promedio de %d reps)%n",
-                    method, size, nanos / 1_000_000, exitos));
-
-        } else if (nanos >= 1_000) {
-
-            salida.append(String.format(
-                    "  %-35s N=%-8d >> %10.2f us (promedio de %d reps)%n",
-                    method, size, nanos / 1_000, exitos));
-
-        } else {
-
-            salida.append(String.format(
-                    "  %-35s N=%-8d >> %10.2f ns (promedio de %d reps)%n",
-                    method, size, nanos, exitos));
-        }
-    }
-
-    private static SISTEMA construirSistema(int n) {
-
-        SISTEMA sistema = new SISTEMA(100);
-
-        for (int i = 0; i < n; i++) {
-
-            byte puntaje = (byte) (i % 101);
-
-            sistema.Agregar_Estudiante(
-                    new Estudiante(i + 1, "E" + i, puntaje));
-        }
-
-        return sistema;
-    }
-
-    private static SISTEMA construirSistemaParaInsercion(int nFinal) {
-        return construirSistema(nFinal - 1);
-    }
-
-    public static void ejecutarAnalisis() {
-
-        int[] tamanios = {100, 500, 1000, 5000, 10000};
-
-        log("");
-        log("================================================================");
-        log("         ANALISIS DE RENDIMIENTO - SISTEMA BST");
-        log("================================================================");
-        log("NOTA: Los datos se insertan en ORDEN CRECIENTE");
-        log("      El BST se comporta como lista enlazada");
-        log("");
-
-        for (int n : tamanios) {
-
-            log(String.format("==> N = %,d estudiantes", n));
-            log("----------------------------------------------------------------");
-
-            try {
-
-                final int tamanoActual = n;
-
-                medirLectura(
-                        tamanoActual,
-                        "obtener_datos_por_ID",
-                        (tam) -> construirSistema(tam),
-                        (sistema) -> sistema.obtener_datos_por_ID(tamanoActual / 2)
-                );
-
-                medirLectura(
-                        tamanoActual,
-                        "Listar_por_puntaje_SE",
-                        (tam) -> construirSistema(tam),
-                        (sistema) -> {
-                            SISTEMA.silenciar = true;
-                            sistema.Listar_por__puntaje_SE();
-                            SISTEMA.silenciar = false;
-                        }
-                );
-
-                medirLectura(
-                        tamanoActual,
-                        "listar_estudiantes_con_residencia",
-                        (tam) -> construirSistema(tam),
-                        (sistema) -> {
-                            SISTEMA.silenciar = true;
-                            sistema.listar_estudiantes_con_residencia();
-                            SISTEMA.silenciar = false;
-                        }
-                );
-
-                medirLectura(
-                        tamanoActual,
-                        "Listar_estudiantes_sin_residencia",
-                        (tam) -> construirSistema(tam),
-                        (sistema) -> {
-                            SISTEMA.silenciar = true;
-                            sistema.Listar_estudiantes_sin_residencia();
-                            SISTEMA.silenciar = false;
-                        }
-                );
-
-                medirEscritura(
-                        tamanoActual,
-                        "Agregar_Estudiante",
-                        (tam) -> construirSistemaParaInsercion(tam),
-                        (sistema) -> {
-                            Estudiante nuevo =
-                                    new Estudiante(tamanoActual, "Nuevo", (byte) 50);
-
-                            sistema.Agregar_Estudiante(nuevo);
-                        }
-                );
-
-                medirEscritura(
-                        tamanoActual,
-                        "Eliminar_Estudiante_por_ID",
-                        (tam) -> construirSistema(tam),
-                        (sistema) ->
-                                sistema.Eliminar_Estudiante_por_ID(tamanoActual)
-                );
-
-                medirEscritura(
-                        tamanoActual,
-                        "Asignar_numero_de_cupos",
-                        (tam) -> construirSistema(tam),
-                        (sistema) ->
-                                sistema.Asignar_numero_de_cupos(500)
-                );
-
-                log("");
-
-            } catch (OutOfMemoryError e) {
-
-                log(String.format(
-                        "ERROR: OutOfMemoryError para N = %,d", n));
-
-                break;
-
-            } catch (StackOverflowError e) {
-
-                log(String.format(
-                        "ERROR: StackOverflowError para N = %,d", n));
-
-                break;
-            }
-        }
-
-        log("================================================================");
-
-        System.out.println(salida.toString());
-    }
-}
 class Estudiante implements Comparable<Estudiante>{
     int id;
     String nombre;
@@ -374,17 +142,15 @@ class BST<T extends Comparable<T>>{
 class SISTEMA <T extends Comparable<T>>{
     private int cupos_disponibles;
     private BST<T> Estudiantes_ordenados_por_Puntaje_SE;
-    private Object[] Estudiantes_por_id;
-    private ArrayListP Estudiantes_con_cupo;
-    public static final int ids = 10000000;
+    private HashTableP Estudiantes_con_cupo;
+    private HashTableP Estudiantes_por_id;
     private int c;
-    public static boolean silenciar = false;
 
     public SISTEMA(int cupos_disponibles) {
         this.cupos_disponibles = cupos_disponibles;
-        Estudiantes_por_id = new Object[ids];
+        Estudiantes_por_id = new HashTableP();
         Estudiantes_ordenados_por_Puntaje_SE = new BST<>();
-        Estudiantes_con_cupo = new ArrayListP();
+        Estudiantes_con_cupo =new HashTableP();
         c = cupos_disponibles;
     }
     
@@ -467,17 +233,16 @@ class SISTEMA <T extends Comparable<T>>{
         }
     }
     
-    private void asignar_ID(int index, T item){
-        if(index < ids && index >= 0) Estudiantes_por_id[index] = item;
-    }
-    
-    @SuppressWarnings("unchecked")    
-    public T obtener_datos_por_ID(int id){
-        return (id < ids && id >= 0 && Estudiantes_por_id[id] != null) ? (T)Estudiantes_por_id[id] : null;
-    }
-    
-    private void borrar_ID(int id_Estudiante){
-        if(id_Estudiante < ids && id_Estudiante >= 0) Estudiantes_por_id[id_Estudiante] = null;
+    private void asignar_ID(int index, T item) {
+    Estudiantes_por_id.add((Estudiante) item);
+    }   
+
+    public T obtener_datos_por_ID(int id) {
+        return (T) Estudiantes_por_id.getById(id);
+    }   
+
+    private void borrar_ID(int id_Estudiante) {
+        Estudiantes_por_id.removeById(id_Estudiante);
     }
 
     public void Eliminar_Estudiante_por_ID(int id){
@@ -496,109 +261,288 @@ class SISTEMA <T extends Comparable<T>>{
         }
     }
 }
+class HashTableP{
+	
+	
+    @SuppressWarnings("unchecked")
+	private LinkedList<Estudiante>[] main = new LinkedList[1];
+	private int size = 0;
+	private int capacity = 1;
+	private double loadFactorThreshold = 1;
+	private Estudiante lastAdded;
+	
+	private int hash(int key) {
+		//Byte Hashing simple
+		int scrambled = key ^ (key >>> 16);
+	    return (scrambled & 0x7FFFFFFF) & (capacity-1);
+	}
+	
+	public void add(Estudiante valor) {
+		if (getCurrentLoadFactor() >= loadFactorThreshold) resize();
+		
+		int hashKey = hash(valor.getId());
+		if (main[hashKey] == null) {
+			main[hashKey] = new LinkedList();
+		}
+		main[hashKey].PushFront(valor);
+		lastAdded = valor;
+		size++;
+	}
+	
+	public void remove(Estudiante valor){
+		int hashKey = hash (valor.getId());
+		if (main[hashKey] != null) {
+			main[hashKey].Erase(valor);
+		}
+	}
+	
+	public boolean contains(Estudiante valor) {
+		int hashKey = hash(valor.getId());
+		
+		if (main[hashKey] == null) return false;
+		if (main[hashKey].Find(valor) !=null) return true;
+		return false;
+	}
+	
+	private void resize() {
+		capacity*=2;
+		
+		LinkedList<Estudiante>[] a = main;
+		LinkedList<Estudiante>[] b = new LinkedList[capacity]; //Crear un array con capacidad aumentada
+		for (int i = 0; i < a.length; i++) {
+			
+			if(a[i]!=null) {
+				while (!a[i].isEmpty()) {
+					Estudiante current = a[i].PopFront();
+					int hashKey = hash(current.getId());
+					if(b[hashKey] == null) b[hashKey] = new LinkedList();
+					b[hashKey].PushFront(current);
+				}
+			}
+		}
+		
+		main = b;
+	}
+	
+	public int getCurrentLoadFactor() {
+		return size/capacity;
+	}
+	
+	public boolean isEmpty(){
+		return size == 0;
+	}
+	
+	public void Imprimir_elementos(){
+		System.out.println("Estudiantes que obtuvieron cupo en las residencias estudiantiles");
+		for (int i = 0; i < capacity; i++) {
+			if (main[i] != null && !main[i].isEmpty()) {
+				main[i].Imprimir_elementos();
+			}
+		}
+	}
+	  
+	@SuppressWarnings("unchecked")
+	public Estudiante ultimo_elemento_ingresado(){
+		return lastAdded;
+	}
+	public void EraseALL(){
+		main = new LinkedList[1];
+		capacity = 1;
+		size = 0;
+	}
 
-class ArrayListP<T extends Comparable<T>> {
-    private Object[] main = new Object[1];
-    private int size = 0;
+    public Estudiante getById(int id) {
+    int hashKey = hash(id);
+    if (main[hashKey] == null) return null;
+    return main[hashKey].findById(id);
+    }
+
+    public void removeById(int id) {
+        int hashKey = hash(id);
+        if (main[hashKey] != null) {
+            main[hashKey].eraseById(id);
+            size--;
+        }
+    }
+  
+}
+
+class LinkedList<T>  {
+	private class Nodo<T>{
+		T valor;
+		Nodo next;
+        Nodo(T data){
+            valor=data;
+        }
+    }
+    private Nodo<T>head;
     
-    private void resize() {
-        Object[] a = main;
-        Object[] b = new Object[size * 2];
-        for (int i = 0; i < main.length; i++) {
-            b[i] = a[i];
-        }
-        main = b;
+    public void LinkedList(){
+    	head=null;
     }
+  
+    public void PushFront(T valor){
+    	Nodo<T> nodo = new Nodo<T>(valor);
+    	if(isEmpty()){
+    		head=nodo;
+    	}
+    	else{
+    		nodo.next=head;
+    		head=nodo;
+    	}
+    }
+  
+    public void PushBack(T valor){
+    	Nodo<T> nodo = new Nodo<T>(valor);
+    	if(isEmpty()){
+    		head=nodo;
+    	}
+    	else{
+    		Nodo<T> var = head;
+    		while(var.next!=null){
+    			var=var.next;
+    		}
+    		var.next=nodo;
+    	}
+    }
+  
+    public T PopFront(){
+    	T pop;
+    	if(!isEmpty()){
+    		pop = head.valor;
+    		head=head.next;
+    		return pop;
+    	}
+    	return null;
+    }
+  
+    public T PopBack(){
+    	if(!isEmpty()){
+    		Nodo<T> var = head;
+    		if(head.next==null){
+    			head=null;
+    		}
+    		else{
+    			while(var.next.next!=null){
+    				var=var.next;
+    			}
+    		}
+    		T pop = (T)var.next.valor;
+    		var.next=null;
+    		return (T)pop;
+    	}
+    	return null;
+    }
+  
+    public Nodo Find(T valor){
+    	Nodo<T> var = head;
+    	if(!isEmpty()){
+    		while(var.next!=null){
+    			if(var.valor==valor){
+    				return var;
+    			}
+    			var=var.next;
+    		}
+    		return null;
+    	}
+    	else{
+    		return null;
+    	}
+    }
+  
+    public void Erase(T valor){
+    	Nodo<T> var = head;
+    	if(!isEmpty()){
+    		if(head.valor == valor){
+    			if(head.next==null){
+    				head=null;
+    			}
+    			else{
+    				head=head.next;
+    			}
+    		}
+    		else if(head.next!=null){
+    			while(var.next.next!=null){
+    				if(var.next.valor==valor){
+    					var.next=var.next.next;
+    					return;
+    				}	
+    			}
+    		}
+    	} 
     
-    public void pushFront(T valor){
-        if (size == main.length) resize();
-        for (int i = size-1; i >= 0; i--) {
-            main[i+1] = main[i];
-        }
-        main[0] = valor;
-        size++;
     }
   
-    public void pushBack(T valor){
-        if(size == main.length) resize();
-        main[size] = valor;
-        size++;
+    public void AddBefore(Nodo nodo, T valor){
+    	if(Find((T) nodo.valor)!=null){
+    		Nodo<T> var = head;
+    		if(head.valor == nodo.valor){
+    			nodo.next=head;
+    			head=nodo;
+    		}
+    		else{
+    			while(var.next!=null){
+    				if(var.next==nodo){
+    					Nodo<T> nuevo = new Nodo<T>(valor);
+    					nuevo.next= var.next;
+    					var.next=nuevo;
+    				}
+    			}
+    		}
+    	} 
     }
   
-    public void popFront(){
-        for (int i = 0; i < size-1; i++) {
-            main[i] = main[i+1];
-        }
-        main[size-1] = null;
-        size--;
-    }
-  
-    public void popBack(){
-        main[size-1] = null;
-        size--;
-    }
-  
-    public int find(T valor){
-        int index = -1;
-        for(int i = 0; i < size; i++) {
-            @SuppressWarnings("unchecked")
-            T cmp = (T)main[i];
-            if(valor.compareTo(cmp) == 0) {
-                index = i; 
-                break;
-            }
-        }
-        return index;
-    }
-  
-    public void remove(T valor){
-        int index = 0; 
-        for (int i = 0; i < size; i++) {
-            @SuppressWarnings("unchecked")
-            T cmp = (T)main[i];
-            if(valor.compareTo(cmp) == 0) {
-                index = i;
-                for (int j = index; j < size-1; j++) {
-                    main[j] = main[j+1];
-                }
-                main[size-1] = null;
-                size--;
-                break;
-            }
-        }
-    }
-  
-    public void add(int index, T valor){
-        if(size == main.length) resize();
-        for (int i = size-1; i >= index; i--) {
-            main[i+1] = main[i];
-        }
-        main[index] = valor;
-        size++;
+    public void AddAfter(Nodo nodo,T valor){
+    	Nodo<T> nuevo = new Nodo<T>(valor);
+    	nuevo.next=nodo.next;
+    	nodo.next=nuevo;
     }
   
     public boolean isEmpty(){
-        return size == 0;
+    	return head==null;
     }
-    
     public void Imprimir_elementos(){
-        if (!SISTEMA.silenciar) System.out.println("Estudiantes que obtuvieron cupo en las residencias estudiantiles");
-        for (int i = 0; i < size; i++) {
-            if (!SISTEMA.silenciar) System.out.println(main[i]);
-        }
+    	Nodo nodo= head;
+    	//System.out.println("Estudiantes que obtuvieron cupo en las residencias estudiantiles");
+    	while(nodo!=null){
+    		System.out.print(nodo.valor+" ");
+    		nodo=nodo.next;
+    	}
+    	System.out.println("");
     }
-      
-    @SuppressWarnings("unchecked")
+  
     public T ultimo_elemento_ingresado(){
-        T last = null;
-        if(size >= 1) {
-            last = (T) main[size-1];
-        }
-        return last;
+    	return head!=null ? head.valor: null;
     }
-    
     public void EraseALL(){
-        main = new Object[1];
-        size = 0;
+    	head=null;
     }
+
+    public T findById(int id) {
+    Nodo<T> var = head;
+    while (var != null) {
+        Estudiante e = (Estudiante) var.valor;
+        if (e.getId() == id) return (T) e;
+        var = var.next;
+    }
+    return null;
+    }
+
+    public void eraseById(int id) {
+    if (isEmpty()) return;
+
+    if (((Estudiante) head.valor).getId() == id) {
+        head = head.next;
+        return;
+    }
+
+    Nodo<T> var = head;
+    while (var.next != null) {
+        if (((Estudiante) var.next.valor).getId() == id) {
+            var.next = var.next.next;
+            return;
+        }
+        var = var.next;
+    }
+}
 }
