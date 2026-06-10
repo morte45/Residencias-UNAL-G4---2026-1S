@@ -342,17 +342,16 @@ class SISTEMA <T extends Comparable<T>>{
     //ATRIBUTOS
     private int cupos_disponibles;
     private AVL<T> Estudiantes_ordenados_por_Puntaje_SE;
-    private Object[] Estudiantes_por_id;
+    private HashTableP Estudiantes_por_id;
     private HashTableP Estudiantes_con_cupo;
-    public static final int ids = 10000;
     private int c;
 
     //CONSTRUCTOR
     public SISTEMA(int cupos_disponibles) {
         this.cupos_disponibles = cupos_disponibles;
-        Estudiantes_por_id = new Object[ids];
+        Estudiantes_por_id = new HashTableP();
         Estudiantes_ordenados_por_Puntaje_SE = new AVL<>();
-        Estudiantes_con_cupo =new HashTableP();
+        Estudiantes_con_cupo = new HashTableP();
         c=cupos_disponibles;
     }
     
@@ -435,19 +434,18 @@ class SISTEMA <T extends Comparable<T>>{
     }
     
     //METODOS PARA ARRAY DE ID
-    private void asignar_ID(int index,T item){
-        Estudiantes_por_id[index]=item;
-    }
-    
-    @SuppressWarnings("unchecked")    
-    public T obtener_datos_por_ID(int id){
-        return Estudiantes_por_id[id]!=null ? (T)Estudiantes_por_id[id] : null;
-    }
-    
-    private void borrar_ID(int id_Estudiante){
-       Estudiantes_por_id[id_Estudiante]=null;
+    private void asignar_ID(int index, T item) {
+        Estudiantes_por_id.add((Estudiante) item);
     }
 
+    public T obtener_datos_por_ID(int id) {
+        return (T) Estudiantes_por_id.getById(id);
+    }
+
+    private void borrar_ID(int id_Estudiante) {
+        Estudiantes_por_id.removeById(id_Estudiante);
+    }
+	
     //METODO PARA ELIMINAR POR ID
     public void Eliminar_Estudiante_por_ID(int id){
         T estudiante = obtener_datos_por_ID(id);
@@ -550,7 +548,20 @@ class HashTableP{
 		capacity = 1;
 		size = 0;
 	}
-  
+	
+	public Estudiante getById(int id) {
+        int hashKey = hash(id);
+        if (main[hashKey] == null) return null;
+        return main[hashKey].findById(id);
+    }
+
+    public void removeById(int id) {
+        int hashKey = hash(id);
+        if (main[hashKey] != null) {
+            main[hashKey].eraseById(id);
+            size--;
+        }
+    }
 }
 
 class LinkedList<T>  {
@@ -703,4 +714,34 @@ class LinkedList<T>  {
     public void EraseALL(){
     	head=null;
     }
+	
+	public T findById(int id) {
+        Nodo<T> var = head;
+        while (var != null) {
+            Estudiante e = (Estudiante) var.valor;
+            if (e.getId() == id) return (T) e;
+            var = var.next;
+        }
+        return null;
+	}
+
+    public void eraseById(int id) {
+        if (isEmpty()) return;
+
+        Estudiante headVal = (Estudiante) head.valor;
+        if (headVal.getId() == id) {
+            head = head.next;
+            return;
+        }
+
+        Nodo<T> var = head;
+        while (var.next != null) {
+            Estudiante nextVal = (Estudiante) var.next.valor;
+            if (nextVal.getId() == id) {
+                var.next = var.next.next;
+                return;
+            }
+            var = var.next;
+        }
+}
 }
