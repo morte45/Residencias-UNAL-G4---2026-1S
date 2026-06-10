@@ -22,4 +22,9 @@ Integrantes del grupo:
 - Miguel Angel Amortegui Enciso
 
 
-Para instalar siga las instrucciones del video o copie el repositorio y abra el archivo AVL_v4.java nombre una carpeta con ese nombre y ejecute el codigo
+Paso a paso para ejecutar la interfaz gráfica de la versión final del proyecto:
+
+1. Abrir Visual Studio.
+2. Dar click en File->Open Folder (Archivo -> Abrir Carpeta).
+3. Abrir el archivo "ProyectoFinal".
+4. Darle a Run (Ejecutar).
