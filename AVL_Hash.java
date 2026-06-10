@@ -1,5 +1,4 @@
-import hashBased2.Estudiante;
-import hashBased2.LinkedList;
+
 
 public class AVL_Hash{
     public static void main(String[] args){
@@ -469,7 +468,7 @@ class HashTableP{
     @SuppressWarnings("unchecked")
 	private LinkedList<Estudiante>[] main = new LinkedList[1];
 	private int size = 0;
-	private int capacity = 1;	
+	private int capacity = 1;
 	private double loadFactorThreshold = 1;
 	private Estudiante lastAdded;
 	
@@ -491,7 +490,20 @@ class HashTableP{
 		size++;
 	}
 	
+	public void remove(Estudiante valor){
+		int hashKey = hash (valor.getId());
+		if (main[hashKey] != null) {
+			main[hashKey].Erase(valor);
+		}
+	}
 	
+	public boolean contains(Estudiante valor) {
+		int hashKey = hash(valor.getId());
+		
+		if (main[hashKey] == null) return false;
+		if (main[hashKey].Find(valor) !=null) return true;
+		return false;
+	}
 	
 	private void resize() {
 		capacity*=2;
@@ -515,6 +527,30 @@ class HashTableP{
 	public int getCurrentLoadFactor() {
 		return size/capacity;
 	}
+	
+	public boolean isEmpty(){
+		return size == 0;
+	}
+	
+	public void Imprimir_elementos(){
+		System.out.println("Estudiantes que obtuvieron cupo en las residencias estudiantiles");
+		for (int i = 0; i < capacity; i++) {
+			if (main[i] != null && !main[i].isEmpty()) {
+				main[i].Imprimir_elementos();
+			}
+		}
+	}
+	  
+	@SuppressWarnings("unchecked")
+	public Estudiante ultimo_elemento_ingresado(){
+		return lastAdded;
+	}
+	public void EraseALL(){
+		main = new LinkedList[1];
+		capacity = 1;
+		size = 0;
+	}
+  
 }
 
 class LinkedList<T>  {
