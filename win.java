@@ -968,7 +968,7 @@ class ventanaCupos extends JFrame{
         panel.add(eti);
 
         JLabel cupos= new JLabel();
-        cupos.setText("ID");
+        cupos.setText("Cupos");
         cupos.setOpaque(true);
         cupos.setHorizontalAlignment(JLabel.CENTER);
         cupos.setBackground(Color.white);
