@@ -25,6 +25,8 @@ Integrantes del grupo:
 Paso a paso para ejecutar la interfaz gráfica de la versión final del proyecto:
 
 1. Abrir Visual Studio.
-2. Dar click en File->Open Folder (Archivo -> Abrir Carpeta).
-3. Abrir el archivo "ProyectoFinal".
-4. Darle a Run (Ejecutar).
+2. Descargar los archivos "AVL_Hash.java", "win.java", "ProyectoFinal.java" y "logo unal.png".
+3. Ponerlos en una carpeta.
+4. Abrir Visual Studio Code, darle en "File->Open Folder" (Archivo->Abrir Carpeta) y seleccionar la carpeta del numeral anterior.
+5. Abrir el archivo "ProyectoFinal".
+6. Darle a Run (Ejecutar).
