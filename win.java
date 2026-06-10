@@ -39,7 +39,7 @@ class win extends JFrame{
         this.sistema=sistemaRecibido;
         this.setSize(1400,1000);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setTitle("AxAxAxA");
+        this.setTitle("Sistema de Gestión de Cupos de Residencias Universitarias");
         Componentes();
         this.setLocationRelativeTo(null);
         this.setMinimumSize(new Dimension(1400,1000));
