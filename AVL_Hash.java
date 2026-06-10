@@ -449,19 +449,58 @@ class SISTEMA <T extends Comparable<T>>{
     //METODO PARA ELIMINAR POR ID
     public void Eliminar_Estudiante_por_ID(int id){
         T estudiante = obtener_datos_por_ID(id);
-    if (estudiante != null) {
-        Estudiantes_ordenados_por_Puntaje_SE.delete(estudiante);
-        borrar_ID(id);
-        Asignar_Cupos();
-        System.out.println("Estudiante con ID " + id + " eliminado correctamente: \n" + estudiante.toString());
-    } else {
-        System.out.println("No existe ningún estudiante con ID " + id);
+	    if (estudiante != null) {
+	        Estudiantes_ordenados_por_Puntaje_SE.delete(estudiante);
+	        borrar_ID(id);
+	        Asignar_Cupos();
+	        System.out.println("Estudiante con ID " + id + " eliminado correctamente: \n" + estudiante.toString());
+	    } else {
+	        System.out.println("No existe ningún estudiante con ID " + id);
+	    }
     }
+	//________________________________________________________________________________________________________________________________________________
+    //MÉTODOS AUXILIARES INTERFAZ GRÁFICA:
+    public LinkedList<Estudiante> Estudiantes(){
+        LinkedList<Estudiante> todos = new LinkedList<>();
+        Node<T> root = Estudiantes_ordenados_por_Puntaje_SE.getRoot();
+        Listar_todos_REC(root, todos);
+        return todos;
     }
+    public LinkedList<Estudiante> EstudiantesConCupo(){
+        return Estudiantes_con_cupo.obtenerTodos();
+    }
+    public LinkedList<Estudiante> EstudiantesSinCupo(){
+        LinkedList<Estudiante> a=new LinkedList<>();
+        Estudiante ultimo_estudiante_con_cupo = (Estudiante) Estudiantes_con_cupo.ultimo_elemento_ingresado();
+        Node<T> root = Estudiantes_ordenados_por_Puntaje_SE.getRoot();
+        if(ultimo_estudiante_con_cupo==null){
+            Listar_todos_REC(root, a);
+            return a;
+        }
+        Listar_estudiantes_sin_residenciaREC2(ultimo_estudiante_con_cupo, root, a);
+        return a;
+    }
+    private void Listar_todos_REC(Node<T> nodo, LinkedList<Estudiante> lista) {
+        if(nodo != null){
+            Listar_todos_REC(nodo.left, lista);
+            lista.PushBack((Estudiante) nodo.data); // Casteamos de T a Estudiante
+            Listar_todos_REC(nodo.right, lista);
+        }
+    }
+    private void Listar_estudiantes_sin_residenciaREC2(Estudiante estudiante, Node<T> nodo, LinkedList<Estudiante> lista){
+        if(nodo!=null){
+            Listar_estudiantes_sin_residenciaREC2(estudiante,nodo.left,lista);            
+            if(nodo.data.compareTo((T) estudiante) > 0){
+                lista.PushBack((Estudiante)nodo.data);
+            } 
+            Listar_estudiantes_sin_residenciaREC2(estudiante,nodo.right,lista);
+            
+        }
+    }
+    //________________________________________________________________________________________________________________________________________
 }
 
 class HashTableP{
-	
 	
     @SuppressWarnings("unchecked")
 	private LinkedList<Estudiante>[] main = new LinkedList[1];
